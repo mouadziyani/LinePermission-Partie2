@@ -68,7 +68,6 @@ public class ConsoleApp {
 
                     if(AuthService.isAuth) {
                         currentUsername = loginUsername ;
-                        System.out.println("connect");
                     }
                 
                 break;
