@@ -39,16 +39,36 @@ public class AuthService{
 
     public void signup(String username , String password) throws Exception{
 
-        if(UserService.users.containsKey(username)){
-            System.out.println("username deja existe");
-            return ;
+        if (username.isEmpty()) {
+            System.out.println("Username invalide");
+            return;
+        }
+
+        if (username.contains(" ")) {
+            System.out.println("Username invalide");
+            return;
+        }
+
+        if (username.contains(":")) {
+            System.out.println("Username invalide");
+            return;
+        }
+
+        if (password.isEmpty()) {
+            System.out.println("Password invalide");
+            return;
+        }
+
+        if (UserService.users.containsKey(username)) {
+            System.out.println("Username deja existe");
+            return;
         }
 
         try {
             
             String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
             String creatUser = username + " : " + passwordHash ; 
-            UserService.users.put(creatUser, passwordHash);
+            UserService.users.put(username, passwordHash);
 
             Files.writeString(userPath, creatUser + System.lineSeparator() , StandardOpenOption.APPEND);
 
