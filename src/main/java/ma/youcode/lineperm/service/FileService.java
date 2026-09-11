@@ -2,6 +2,7 @@ package ma.youcode.lineperm.service;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class FileService{
 
     Path dossier = Path.of("createdFile");  
     private List<FichierProtege> fichiers = new ArrayList<>();
+    Path files = Path.of("src/main/resources/files.txt");
 
     public FileService(){
 
@@ -43,10 +45,9 @@ public class FileService{
 
                 String filePermWriter = "rwd|--- " + owner + " " + name;
 
-                System.out.println(filePermWriter);
+                Files.writeString(files, filePermWriter+System.lineSeparator(),StandardOpenOption.APPEND);
 
                 fichiers.add(newFile);
-
                 return true ;
 
         } catch (Exception e) {
@@ -56,14 +57,26 @@ public class FileService{
         }
     }
 
-    public void lsFichier(){
-        if(fichiers.isEmpty()){
-            System.out.println("aucun fichier");
-        }
+    public void lsFichier() {
+        try {
+            if (!Files.exists(files)) {
+                System.out.println("Aucun fichier");
+                return;
+            }
 
-        for(FichierProtege f : fichiers){
-            System.out.println(f.getNameOfFile());
-        }
+            List<String> lignes = Files .readAllLines(files);
 
+            if (lignes.isEmpty()) {
+                System.out.println("Aucun fichier");
+                return;
+            }
+
+            for (String ligne : lignes) {
+                System.out.println(ligne);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erreur lecture files.txt");
+        }
     }
 }
