@@ -76,7 +76,32 @@ public class FileService{
             }
 
         } catch (Exception e) {
-            System.out.println("Erreur lecture files.txt");
+            System.out.println("Erreur lecture files");
         }
+    }
+
+    public void catFile(String name){
+
+        Path file = dossier.resolve(name);
+
+        try {
+            if (!Files.exists(files)) {
+                System.out.println("Aucun fichier");
+                return;
+            }
+
+            String content = Files.readString(file);
+
+            if (content.isEmpty()) {
+                System.out.println("file is vide");
+                return ;
+            }
+
+            System.out.println(content);
+
+        } catch (Exception e) {
+            System.out.println("Erreur lister les files");
+        }
+
     }
 }
