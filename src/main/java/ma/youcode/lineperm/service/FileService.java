@@ -55,4 +55,15 @@ public class FileService{
             return false;
         }
     }
+
+    public void lsFichier(){
+        if(fichiers.isEmpty()){
+            System.out.println("aucun fichier");
+        }
+
+        for(FichierProtege f : fichiers){
+            System.out.println(f.getNameOfFile());
+        }
+
+    }
 }
