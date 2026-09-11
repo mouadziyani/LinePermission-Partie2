@@ -116,6 +116,19 @@ public class ConsoleApp {
                     fileService.lsFichier();
                     break;
 
+                case "cat":
+
+                    if (!AuthService.isAuth) {
+                        System.out.println("Vous devez vous connecter");
+                        break;
+                    }
+
+                    String catF = choix[1];
+
+                    fileService.catFile(catF);
+
+                    break;
+
                 case "exit":
                     break;
 
