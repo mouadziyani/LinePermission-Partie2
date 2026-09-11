@@ -1,5 +1,6 @@
 package ma.youcode.lineperm.ui;
 
+import java.nio.file.Files;
 import java.util.*;
 import ma.youcode.lineperm.service.AuthService;
 import ma.youcode.lineperm.service.FileService;
@@ -126,6 +127,34 @@ public class ConsoleApp {
                     String catF = choix[1];
 
                     fileService.catFile(catF);
+
+                    break;
+
+                case "nano":
+
+                System.out.println("Ecrivez le contenu (EOF pour sauvegarder) :");
+
+                    if (!AuthService.isAuth) {
+                        System.out.println("Vous devez vous connecter");
+                        break;
+                    }
+
+                    String nanoF = choix[1];
+                    StringBuilder contenue = new StringBuilder();
+
+                    while (true) {
+                        String ligne = scanner.nextLine(); 
+
+                        if(ligne.contains("EOF")){
+                            break ;
+                        }
+
+                        contenue.append(ligne);
+                        contenue.append(System.lineSeparator());
+
+                    }
+
+                    fileService.nano(nanoF, contenue.toString());
 
                     break;
 
