@@ -2,12 +2,14 @@ package ma.youcode.lineperm.ui;
 
 import java.util.*;
 import ma.youcode.lineperm.service.AuthService;
+import ma.youcode.lineperm.service.FileService;
 
 public class ConsoleApp {
 
     public void LoadApp() throws Exception {
 
         AuthService service = new AuthService();
+        FileService fileService = new FileService();
 
         String choixDeUser;
         String choix = "";
@@ -69,7 +71,6 @@ public class ConsoleApp {
                     if(AuthService.isAuth) {
                         currentUsername = loginUsername ;
                     }
-                
                 break;
 
                 case "logout":
@@ -86,6 +87,35 @@ public class ConsoleApp {
                         }
                             
                 break;
+
+                case "touch":
+
+                if (!AuthService.isAuth) {
+                    System.out.println("Vous devez vous connecter");
+                    break;
+                }
+
+                System.out.print("Nom fichier : ");
+                String fileName = scanner.nextLine();
+
+                boolean created = fileService.touch(fileName, currentUsername);
+
+                if (created) {
+                    System.out.println("Fichier cree");
+                } else {
+                    System.out.println("Erreur creation fichier");
+                }
+
+                break;
+
+                case "ls":
+                    if (!AuthService.isAuth) {
+                        System.out.println("Vous devez vous connecter");
+                        break;
+                    }
+
+                    fileService.lsFichier();
+                    break;
 
                 case "exit":
                     break;
