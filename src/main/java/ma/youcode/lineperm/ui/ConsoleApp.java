@@ -12,7 +12,7 @@ public class ConsoleApp {
         FileService fileService = new FileService();
 
         String choixDeUser;
-        String choix = "";
+        String[] choix = null;
         String currentUsername = null;
 
         Scanner scanner = new Scanner(System.in);
@@ -31,9 +31,9 @@ public class ConsoleApp {
             }
 
             choixDeUser = scanner.nextLine();
-            choix = choixDeUser.trim().toLowerCase();
+            choix = choixDeUser.trim().toLowerCase().split(" ");
 
-            switch (choix) {
+            switch (choix[0]) {
 
                 case "signup":
 
@@ -95,13 +95,12 @@ public class ConsoleApp {
                     break;
                 }
 
-                System.out.print("Nom fichier : ");
-                String fileName = scanner.nextLine();
+                String fileName = choix[1];
 
                 boolean created = fileService.touch(fileName, currentUsername);
 
                 if (created) {
-                    System.out.println("Fichier cree");
+                    System.out.println("Fichier cree : " + fileName);
                 } else {
                     System.out.println("Erreur creation fichier");
                 }
@@ -125,7 +124,7 @@ public class ConsoleApp {
                     break;
             }
 
-        } while (!choix.equals("exit"));
+        } while (!choix[0].equals("exit"));
 
         System.out.println("Au revoir !");
     }
