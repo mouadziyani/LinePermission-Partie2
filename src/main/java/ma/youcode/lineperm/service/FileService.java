@@ -104,4 +104,20 @@ public class FileService{
         }
 
     }
+
+    public void nano(String name , String contenue){
+        Path file = dossier.resolve(name);
+        try {
+            if (!Files.exists(files)) {
+                System.out.println("Aucun fichier");
+                return;
+            }
+
+            Files.writeString(file, contenue);
+            
+        } catch (Exception e) {
+            System.out.println("Erreur lister les files");
+        }
+    }
+
 }
