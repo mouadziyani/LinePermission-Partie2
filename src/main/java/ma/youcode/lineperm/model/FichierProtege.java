@@ -61,4 +61,28 @@ public class FichierProtege {
     public void setotherD(boolean otherD) {
         this.otherD = otherD;
     }
+    public void setNameOfFile(String nameOfFile) {
+        this.nameOfFile = nameOfFile;
+    }
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+    public void setOwnerR(boolean ownerR) {
+        this.ownerR = ownerR;
+    }
+    public void setOwnerW(boolean ownerW) {
+        this.ownerW = ownerW;
+    }
+    public void setOwnerD(boolean ownerD) {
+        this.ownerD = ownerD;
+    }
+    public void setOtherR(boolean otherR) {
+        this.otherR = otherR;
+    }
+    public void setOtherW(boolean otherW) {
+        this.otherW = otherW;
+    }
+    public void setOtherD(boolean otherD) {
+        this.otherD = otherD;
+    }
 }
