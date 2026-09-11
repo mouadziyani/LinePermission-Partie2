@@ -38,6 +38,7 @@ public class FichierProtege {
     }
     public boolean getOwnerW() {
         return this.ownerW;
+        
     }
     public boolean getOwnerD() {
         return this.ownerD;
