@@ -15,7 +15,7 @@ public class FileService{
     Path files = Path.of("src/main/resources/files.txt");
 
     public FileService(){
-
+        loadFiles();
     }
 
    public boolean touch(String name, String owner) {
@@ -80,12 +80,30 @@ public class FileService{
         }
     }
 
-    public void catFile(String name){
+    public void catFile(String name , String username){
+
+        FichierProtege filePerm = null ;
+
+        for (FichierProtege file : fichiers) {
+            if (file.getNameOfFile().equals(name)) {
+                filePerm = file;
+                break;
+            }
+        }
+
+        if (filePerm == null) {
+            System.out.println("File not found");
+            return;
+        }
+        if (!filePerm.getOwner().equals(username) && !filePerm.getOtherR()) {
+            System.out.println("Permission denied.");
+            return;
+        }
 
         Path file = dossier.resolve(name);
 
         try {
-            if (!Files.exists(files)) {
+            if (!Files.exists(file)) {
                 System.out.println("Aucun fichier");
                 return;
             }
@@ -105,10 +123,30 @@ public class FileService{
 
     }
 
-    public void nano(String name , String contenue){
+    public void nano(String name , String contenue , String username){
+
+        FichierProtege filePerm = null;
+
+        for (FichierProtege file : fichiers) {
+            if (file.getNameOfFile().equals(name)) {
+                filePerm = file;
+                break;
+            }
+        }
+
+        if (filePerm == null) {
+            System.out.println("File not found");
+            return;
+        }
+
+        if (!filePerm.getOwner().equals(username) && !filePerm.getOtherW()) {
+            System.out.println("Permission denied.");
+            return;
+        }
+
         Path file = dossier.resolve(name);
         try {
-            if (!Files.exists(files)) {
+            if (!Files.exists(file)) {
                 System.out.println("Aucun fichier");
                 return;
             }
@@ -120,4 +158,132 @@ public class FileService{
         }
     }
 
+    public boolean chmod(String username, String permission, String fileName){
+
+        FichierProtege filePerm = null;
+
+        for(FichierProtege file : fichiers){
+
+            if(file.getNameOfFile().equals(fileName)){
+                filePerm = file;
+                break;
+            }
+        }
+
+        if(filePerm == null){
+            System.out.println("File not found");
+            return false;
+        }
+
+        if(!filePerm.getOwner().equals(username)){
+            System.out.println("Permission denied.");
+            return false;
+        }
+
+
+        if(permission.equals("r")) {
+
+        filePerm.setPermission('r');
+
+        } else if(permission.equals("w")) {
+
+            filePerm.setPermission('w');
+
+        } else if(permission.equals("d")) {
+
+            filePerm.setPermission('d');
+
+        } else if(permission.equals("-r")) {
+
+            filePerm.removePermission('r');
+
+        } else if(permission.equals("-w")) {
+
+            filePerm.removePermission('w');
+
+        } else if(permission.equals("-d")) {
+
+            filePerm.removePermission('d');
+
+        } else {
+
+            System.out.println("Permission invalide");
+            return false;
+        }
+
+        saveFiles();
+
+        return true;
+    }
+
+    public void loadFiles(){
+
+        if (!Files.exists(files)) {
+            return;
+        }
+
+        try {
+
+            List<String> lignes = Files.readAllLines(files);
+
+            for (String ligne : lignes) {
+
+                if (ligne.isEmpty()) {
+                    continue;
+                }
+
+                String[] data = ligne.split(" ");
+
+                if (data.length == 3) {
+
+                    String permission = data[0];
+                    String owner = data[1];
+                    String name = data[2];
+
+                    FichierProtege fichier = new FichierProtege(name, owner);
+
+                    if (permission.charAt(4) == 'r') {
+                        fichier.setotherR(true);
+                    }
+
+                    if (permission.charAt(5) == 'w') {
+                        fichier.setotherW(true);
+                    }
+
+                    if (permission.charAt(6) == 'd') {
+                        fichier.setotherD(true);
+                    }
+
+                    fichiers.add(fichier);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erreur chargement fichiers");
+        }
+    }
+
+    public void saveFiles() {
+
+        try {
+
+            StringBuilder content = new StringBuilder();
+
+            for (FichierProtege fichier : fichiers) {
+
+                content.append(fichier.getPermission())
+                    .append(" ")
+                    .append(fichier.getOwner())
+                    .append(" ")
+                    .append(fichier.getNameOfFile())
+                    .append(System.lineSeparator());
+            }
+
+            Files.writeString(files, content.toString());
+
+        } catch (Exception e) {
+            System.out.println("Erreur sauvegarde fichiers");
+        }
+    }
+    
 }
