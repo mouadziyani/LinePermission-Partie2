@@ -1,6 +1,5 @@
 package ma.youcode.lineperm.ui;
 
-import java.nio.file.Files;
 import java.util.*;
 import ma.youcode.lineperm.service.AuthService;
 import ma.youcode.lineperm.service.FileService;
@@ -117,18 +116,18 @@ public class ConsoleApp {
                     fileService.lsFichier();
                     break;
 
-                case "cat":
+                    case "cat":
 
-                    if (!AuthService.isAuth) {
-                        System.out.println("Vous devez vous connecter");
+                        if (!AuthService.isAuth) {
+                            System.out.println("Vous devez vous connecter");
+                            break;
+                        }
+
+                        String catF = choix[1];
+
+                        fileService.catFile(catF, currentUsername);
+
                         break;
-                    }
-
-                    String catF = choix[1];
-
-                    fileService.catFile(catF);
-
-                    break;
 
                 case "nano":
 
@@ -145,7 +144,7 @@ public class ConsoleApp {
                     while (true) {
                         String ligne = scanner.nextLine(); 
 
-                        if(ligne.contains("EOF")){
+                        if(ligne.equals("EOF")){
                             break ;
                         }
 
@@ -154,7 +153,25 @@ public class ConsoleApp {
 
                     }
 
-                    fileService.nano(nanoF, contenue.toString());
+                    fileService.nano(nanoF, contenue.toString(), currentUsername);
+
+                    break;
+
+                case "chmod":
+
+                    if (!AuthService.isAuth) {
+                        System.out.println("Vous devez vous connecter");
+                        break;
+                    }
+
+                    String permission = choix[1];
+                    String chmodFile = choix[2];
+
+                    boolean changed = fileService.chmod(currentUsername,permission,chmodFile);
+
+                    if (changed) {
+                        System.out.println("Permission modifiee");
+                    }
 
                     break;
 
