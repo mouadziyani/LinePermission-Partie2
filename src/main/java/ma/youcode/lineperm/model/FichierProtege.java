@@ -16,23 +16,21 @@ public class FichierProtege {
 
         this.nameOfFile = name;
         this.owner = owner;
+        
         this.ownerR = true;
         this.ownerW = true;
         this.ownerD = true;
+
         this.otherR = false;
         this.otherW = false;
         this.otherD = false;
     }
-
-
     public String getNameOfFile() {
         return this.nameOfFile;
     }
-
     public String getOwner() {
         return this.owner;
     }
-
     public boolean getOwnerR() {
         return this.ownerR;
     }
@@ -67,22 +65,40 @@ public class FichierProtege {
     public void setOwner(String owner) {
         this.owner = owner;
     }
-    public void setOwnerR(boolean ownerR) {
-        this.ownerR = ownerR;
+
+    public void setPermission(char permission) {
+
+        if (permission == 'r') {
+            otherR = true;
+        } else if (permission == 'w') {
+            otherW = true;
+            otherR = true;
+        } else if (permission == 'd') {
+            otherD = true;
+        }
     }
-    public void setOwnerW(boolean ownerW) {
-        this.ownerW = ownerW;
+
+    public void removePermission(char permission) {
+
+        if (permission == 'r') {
+            otherR = false;
+            otherW = false;
+        } else if (permission == 'w') {
+            otherW = false;
+        } else if (permission == 'd') {
+            otherD = false;
+        }
     }
-    public void setOwnerD(boolean ownerD) {
-        this.ownerD = ownerD;
-    }
-    public void setOtherR(boolean otherR) {
-        this.otherR = otherR;
-    }
-    public void setOtherW(boolean otherW) {
-        this.otherW = otherW;
-    }
-    public void setOtherD(boolean otherD) {
-        this.otherD = otherD;
+
+    public String getPermission() {
+
+        String ownerPerm = "rwd";
+
+        String otherPerm =
+                (otherR ? "r" : "-") +
+                (otherW ? "w" : "-") +
+                (otherD ? "d" : "-");
+
+        return ownerPerm + "|" + otherPerm;
     }
 }
