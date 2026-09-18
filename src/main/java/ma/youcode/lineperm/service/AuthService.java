@@ -73,7 +73,7 @@ public class AuthService{
             Files.writeString(userPath, creatUser + System.lineSeparator() , StandardOpenOption.APPEND);
 
         } catch (Exception e) {
-            throw new Exception("Error");
+            System.out.println(e.getStackTrace());
         }
     }
 
