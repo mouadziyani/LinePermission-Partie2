@@ -41,7 +41,7 @@ public class UserService{
         }   
 
         } catch (Exception e) {
-            System.out.println("Erreur lors du chargement des utilisateurs.");
+            System.out.println(e.getStackTrace());
         }
     }
 

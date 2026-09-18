@@ -52,7 +52,7 @@ public class FileService{
 
         } catch (Exception e) {
 
-            System.out.println("error");
+            System.out.println(e.getStackTrace());
             return false;
         }
     }
@@ -76,7 +76,7 @@ public class FileService{
             }
 
         } catch (Exception e) {
-            System.out.println("Erreur lecture files");
+            System.out.println(e.getStackTrace());
         }
     }
 
@@ -118,7 +118,8 @@ public class FileService{
             System.out.println(content);
 
         } catch (Exception e) {
-            System.out.println("Erreur lister les files");
+            System.out.println(e.getStackTrace());
+
         }
 
     }
@@ -154,7 +155,7 @@ public class FileService{
             Files.writeString(file, contenue);
             
         } catch (Exception e) {
-            System.out.println("Erreur lister les files");
+            System.out.println(e.getStackTrace());
         }
     }
 
@@ -259,7 +260,7 @@ public class FileService{
             }
 
         } catch (Exception e) {
-            System.out.println("Erreur chargement fichiers");
+            System.out.println(e.getStackTrace());
         }
     }
 
@@ -282,7 +283,7 @@ public class FileService{
             Files.writeString(files, content.toString());
 
         } catch (Exception e) {
-            System.out.println("Erreur sauvegarde fichiers");
+            System.out.println(e.getStackTrace());
         }
     }
     
