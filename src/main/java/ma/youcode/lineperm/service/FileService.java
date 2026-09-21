@@ -80,7 +80,7 @@ public class FileService{
         }
     }
 
-    public void catFile(String name , String username){
+    public boolean catFile(String name , String username){
 
         FichierProtege filePerm = null ;
 
@@ -93,11 +93,11 @@ public class FileService{
 
         if (filePerm == null) {
             System.out.println("File not found");
-            return;
+            return false ;
         }
         if (!filePerm.getOwner().equals(username) && !filePerm.getOtherR()) {
             System.out.println("Permission denied.");
-            return;
+            return false;
         }
 
         Path file = dossier.resolve(name);
@@ -105,26 +105,28 @@ public class FileService{
         try {
             if (!Files.exists(file)) {
                 System.out.println("Aucun fichier");
-                return;
+                return false;
             }
 
             String content = Files.readString(file);
 
             if (content.isEmpty()) {
                 System.out.println("file is vide");
-                return ;
+                return true;
             }
 
             System.out.println(content);
+            return true;
 
         } catch (Exception e) {
             System.out.println(e.getStackTrace());
 
+            return false;
         }
 
     }
 
-    public void nano(String name , String contenue , String username){
+    public boolean nano(String name , String contenue , String username){
 
         FichierProtege filePerm = null;
 
@@ -137,25 +139,27 @@ public class FileService{
 
         if (filePerm == null) {
             System.out.println("File not found");
-            return;
+            return false;
         }
 
         if (!filePerm.getOwner().equals(username) && !filePerm.getOtherW()) {
             System.out.println("Permission denied.");
-            return;
+            return false;
         }
 
         Path file = dossier.resolve(name);
         try {
             if (!Files.exists(file)) {
                 System.out.println("Aucun fichier");
-                return;
+                return true;
             }
 
             Files.writeString(file, contenue);
+            return true ;
             
         } catch (Exception e) {
             System.out.println(e.getStackTrace());
+            return false ;
         }
     }
 
@@ -285,6 +289,25 @@ public class FileService{
         } catch (Exception e) {
             System.out.println(e.getStackTrace());
         }
+    }
+
+    public boolean canWrite(String fileName, String username) {
+
+        for (FichierProtege filePerm : fichiers) {
+
+            if (filePerm.getNameOfFile().equals(fileName)) {
+
+                if (!filePerm.getOwner().equals(username)
+                        && !filePerm.getOtherW()) {
+
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
     
 }
