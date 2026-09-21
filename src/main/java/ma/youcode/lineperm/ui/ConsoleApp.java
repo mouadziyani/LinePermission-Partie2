@@ -140,20 +140,17 @@
 
                             String catF = choix[1];
 
-                            fileService.catFile(catF, currentUsername);
+                        boolean read = fileService.catFile(catF, currentUsername);
 
-                                logService.saveLogs(
-                                    currentUsername,
-                                    "LECTURE",
-                                    catF,
-                                    "OK"
-                                );
+                        if (read) {
+                            logService.saveLogs(currentUsername, "LECTURE", catF, "OK");
+                        } else {
+                            logService.saveLogs(currentUsername, "LECTURE", catF, "REFUSE");
+                        }
 
                             break;
 
                     case "nano":
-
-                    System.out.println("Ecrivez le contenu (EOF pour sauvegarder) :");
 
                         if (!AuthService.isAuth) {
                             System.out.println("Vous devez vous connecter");
@@ -161,27 +158,56 @@
                         }
 
                         String nanoF = choix[1];
+
+                        if (!fileService.canWrite(nanoF, currentUsername)) {
+                            System.out.println("Permission denied.");
+
+                            logService.saveLogs(
+                                currentUsername,
+                                "ECRITURE",
+                                nanoF,
+                                "REFUSE"
+                            );
+
+                            break;
+                        }
+
+                        System.out.println("Ecrivez le contenu (EOF pour sauvegarder) :");
+
                         StringBuilder contenue = new StringBuilder();
 
                         while (true) {
-                            String ligne = scanner.nextLine(); 
+                            String ligne = scanner.nextLine();
 
-                            if(ligne.equals("EOF")){
-                                break ;
+                            if (ligne.equals("EOF")) {
+                                break;
                             }
 
                             contenue.append(ligne);
                             contenue.append(System.lineSeparator());
-
                         }
 
-                        fileService.nano(nanoF, contenue.toString(), currentUsername);
+                        boolean nanoResult = fileService.nano(
+                            nanoF,
+                            contenue.toString(),
+                            currentUsername
+                        );
+
+                        if (nanoResult) {
                             logService.saveLogs(
                                 currentUsername,
                                 "ECRITURE",
                                 nanoF,
                                 "OK"
                             );
+                        } else {
+                            logService.saveLogs(
+                                currentUsername,
+                                "ECRITURE",
+                                nanoF,
+                                "REFUSE"
+                            );
+                        }
 
                         break;
 
