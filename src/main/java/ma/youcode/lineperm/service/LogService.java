@@ -6,6 +6,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import ma.youcode.lineperm.model.Users;
 
 public class LogService {
     Path link = Path.of("src/main/resources/access.log");
+    Scanner scanner = new Scanner(System.in);
 
     private List<AccessLog> logs = new ArrayList<>();
     
@@ -102,11 +104,63 @@ public void saveLogs(
                     .distinct().toList();
     }
 
-    // public Map<String , long> userActions(){
-    //     return logs.stream()
-    //                 .collect(Collectors.groupingBy(AccessLog::getUtilisateur,Collectors.counting()));
-    // }
+    public Map<String, Long> userActions() {
+        return logs.stream()
+                .collect(
+                    Collectors.groupingBy(
+                        AccessLog::getUtilisateur,
+                        Collectors.counting()
+                    )
+                );
+    }
 
+    public List<Map.Entry<String, Long>> topFiles(){
+        Map<String, Long> files = logs.stream()
+                    .collect(Collectors.groupingBy(AccessLog::getFichier,Collectors.counting()));
+
+                    return files.entrySet().stream()
+                                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                                .limit(3).toList();
+
+    }
+
+    public Map<String, Long> aceesRefuserUser() {
+        String username = scanner.nextLine();
+        return logs.stream()
+                .filter(log -> log.getResultat().equals("REFUSE"))
+                .filter(log -> log.getUtilisateur().equals(username))
+                .collect(
+                    Collectors.groupingBy(
+                        AccessLog::getUtilisateur,
+                        Collectors.counting()
+                    )
+                );
+    }
+
+    public String utilisateurPlusActif() {
+        Map<String, Long> actions = logs.stream()
+                .collect(
+                    Collectors.groupingBy(
+                        AccessLog::getUtilisateur,
+                        Collectors.counting()
+                    )
+                );
+
+        return actions.entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue()).get().getKey();
+
+    }
+
+    public Map<String, Long> actionType(){
+        return logs.stream()
+                .collect(
+                    Collectors.groupingBy(
+                        AccessLog::getAction,
+                        Collectors.counting()
+                    )
+                );        
+    }
 }
 
 
