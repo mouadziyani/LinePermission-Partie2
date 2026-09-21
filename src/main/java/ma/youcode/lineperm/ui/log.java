@@ -24,7 +24,7 @@ import ma.youcode.lineperm.service.LogService;
                 System.out.println("5) Top 3 des fichiers consultes");
                 System.out.println("6) Acces refuses d'un utilisateur");
                 System.out.println("7) Utilisateur le plus actif");
-                System.out.println("8) Reapartition des actions par type");
+                System.out.println("8) Repartition des actions par type");
                 System.out.println("0) Quitter");
 
 
@@ -47,32 +47,44 @@ import ma.youcode.lineperm.service.LogService;
                         break;
                     case 3:
                         System.out.println("\n");
-                        System.out.print("les Action par utilisateur sont : ");
+                        System.out.print("Utilisateurs distincts : ");
                         System.out.println(logService.userDistinct());
                         System.out.println("\n");
                         break;
                     case 4:
                         System.out.println("\n");
-                        System.out.print("les Utilisateur de Lineperm sont : ");
-                        System.out.println(logService.userDistinct());
+                        System.out.print("Actions par utilisateur : ");
+                        System.out.println(logService.userActions());
                         System.out.println("\n");                        
                         break;
                     case 5:
-                        
+                        System.out.println("\n");
+                        System.out.print("Top 3 des fichiers consultes sont : ");
+                        System.out.println(logService.topFiles());
+                        System.out.println("\n"); 
                         break;
                     case 6:
-                        
+                        System.out.println("\n");
+                        System.out.print("Acces refuses d'un utilisateur : ");
+                        System.out.println(logService.aceesRefuserUser());
+                        System.out.println("\n");
                         break;
                     case 7:
-                        
+                        System.out.println("\n");
+                        System.out.print("Utilisateur le plus actif est : ");
+                        System.out.println(logService.utilisateurPlusActif());
+                        System.out.println("\n");                        
                         break;
                     case 8:
-                        
+                        System.out.println("\n");
+                        System.out.print("Reapartition des actions par type : ");
+                        System.out.println(logService.actionType());
+                        System.out.println("\n");                         
                         break;
                     case 0:
                         System.out.println("EXIT LogAnalyser !. ");
                         break;
-                
+                    
                     default:
                         break;
                 }
