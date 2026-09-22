@@ -6,12 +6,9 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import ma.youcode.lineperm.model.AccessLog;
-import ma.youcode.lineperm.model.Users;
 
 public class LogService {
     Path link = Path.of("src/main/resources/access.log");
