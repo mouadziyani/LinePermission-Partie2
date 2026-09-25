@@ -86,15 +86,20 @@ public class LogDao extends AbstractDao<AccessLog> {
     }
 
     public long countTotalActions() {
-        try (PreparedStatement preparedStatement = connect.prepareStatement(countTotalActionsQuery)) {
-            
+        try (PreparedStatement preparedStatement = connect.prepareStatement(countTotalActionsQuery);
+            ResultSet result = preparedStatement.executeQuery()) {
+
+            if (result.next()) {
+                return result.getLong("total");
+            }
+
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
 
         return 0;
     }
-
+    
     public long countAccesRefuses() {
         try (PreparedStatement preparedStatement = connect.prepareStatement(countAccessDeniedQuery)) {
             
