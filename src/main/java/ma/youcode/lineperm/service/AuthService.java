@@ -1,81 +1,124 @@
 package ma.youcode.lineperm.service;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-
 import org.mindrot.jbcrypt.BCrypt;
+
+import ma.youcode.lineperm.model.Users;
 
 
 public class AuthService{
 
-    public AuthService(){
-        new UserService();
-    }
-
-
     public static boolean isAuth = false ;
-    Path userPath = Path.of("src/main/resources/users.txt");   
-    
-    
-    public void login(String username, String password) {
+    private UserService userService = new UserService();
 
-        if (UserService.users.containsKey(username)) {
+    public void login(String username , String password){
 
-            String passwordHash = UserService.users.get(username);
+        Users user = userService.findByUsername(username);
 
-            if (!BCrypt.checkpw(password, passwordHash)) {
-                System.out.println("password incorrect");
-                return;
-            }
-
-            isAuth = true;
-            System.out.println("connect");
-
-        } else {
+        if (user == null) {
             System.out.println("username not found");
+            return;
         }
+
+        if (!BCrypt.checkpw(password, user.getPasswordHash())) {
+            System.out.println("password incorrect");
+            return;
+        }
+
+        isAuth = true ;
+        System.out.println("connect");
+
     }
 
-    public void signup(String username , String password) throws Exception{
+    public void signup(String username , String password){
 
-        if (username.isEmpty()) {
-            System.out.println("Username invalide");
+        if(username.isEmpty()){
+            System.out.println("username invalide");
+            return ;
+        }
+
+        if(password.isEmpty()){
+            System.out.println("password invalid");
             return;
         }
 
-        if (username.contains(" ")) {
-            System.out.println("Username invalide");
-            return;
+        if (userService.findByUsername(username)!=null) {
+            System.out.println("username deja utliser dans un autre compte");
+            return ;
         }
 
-        if (username.contains(":")) {
-            System.out.println("Username invalide");
-            return;
-        }
+        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+        Users user = new Users(username, passwordHash) ;
+        userService.saveUsers(user);
+        System.out.println("compte creer");
 
-        if (password.isEmpty()) {
-            System.out.println("Password invalide");
-            return;
-        }
+    }
 
-        if (UserService.users.containsKey(username)) {
-            System.out.println("Username deja existe");
-            return;
-        }
+    // public AuthService(){
+    //     new UserService();
+    // }
 
-        try {
+
+    // Path userPath = Path.of("src/main/resources/users.txt");   
+    
+    
+    // public void login(String username, String password) {
+
+    //     if (UserService.users.containsKey(username)) {
+
+    //         String passwordHash = UserService.users.get(username);
+
+    //         if (!BCrypt.checkpw(password, passwordHash)) {
+    //             System.out.println("password incorrect");
+    //             return;
+    //         }
+
+    //         isAuth = true;
+    //         System.out.println("connect");
+
+    //     } else {
+    //         System.out.println("username not found");
+    //     }
+    // }
+
+    // public void signup(String username , String password) throws Exception{
+
+    //     if (username.isEmpty()) {
+    //         System.out.println("Username invalide");
+    //         return;
+    //     }
+
+    //     if (username.contains(" ")) {
+    //         System.out.println("Username invalide");
+    //         return;
+    //     }
+
+    //     if (username.contains(":")) {
+    //         System.out.println("Username invalide");
+    //         return;
+    //     }
+
+    //     if (password.isEmpty()) {
+    //         System.out.println("Password invalide");
+    //         return;
+    //     }
+
+    //     if (UserService.users.containsKey(username)) {
+    //         System.out.println("Username deja existe");
+    //         return;
+    //     }
+
+    //     try {
             
-            String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
-            String creatUser = username + " : " + passwordHash ; 
-            UserService.users.put(username, passwordHash);
+    //         String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+    //         String creatUser = username + " : " + passwordHash ; 
+    //         UserService.users.put(username, passwordHash);
 
-            Files.writeString(userPath, creatUser + System.lineSeparator() , StandardOpenOption.APPEND);
+    //         Files.writeString(userPath, creatUser + System.lineSeparator() , StandardOpenOption.APPEND);
 
-        } catch (Exception e) {
-            System.out.println(e.getStackTrace());
-        }
-    }
+    //     } catch (Exception e) {
+    //         System.out.println(e.getStackTrace());
+    //     }
+    // }
 
 
     
