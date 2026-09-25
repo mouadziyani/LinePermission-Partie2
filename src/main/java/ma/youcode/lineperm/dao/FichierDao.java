@@ -9,6 +9,9 @@ public class FichierDao extends AbstractDao<FichierProtege> {
     private static final String insertQuery =
         "INSERT INTO files(name, owner, permissions) VALUES (?, ?, ?)";
 
+    private static final String findByIdQuery =
+            "SELECT * FROM files WHERE id = ?";
+
     @Override
     public void save(FichierProtege fichier) {
         try (PreparedStatement preparedStatement = connect.prepareStatement(insertQuery)) {
@@ -25,7 +28,20 @@ public class FichierDao extends AbstractDao<FichierProtege> {
 
     @Override
     public FichierProtege findById(int id) {
-        return null ;
+        try (PreparedStatement preparedStatement = connect.prepareStatement(findByIdQuery)) {
+            preparedStatement.setInt(1, id);
+
+            try (ResultSet reuslt = preparedStatement.executeQuery()) {
+                if (reuslt.next()) {
+                    String name = reuslt.getNString("nameOfFile");
+                    String owner = reuslt.getNString("owner");
+                    String permissions = reuslt.getNString("permissions");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return null;
     }
 
     @Override
