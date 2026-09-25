@@ -15,6 +15,9 @@ public class UserDao extends AbstractDao<Users> {
     private static final String deleteQuery =
             "DELETE FROM users WHERE id = ?";
 
+    private static final String findByUsernameQuery =
+            "SELECT * FROM users WHERE username = ?";
+
     @Override
     public void save(Users user) {
         try (PreparedStatement preparedStatement = connect.prepareStatement(insertQuery)){
@@ -63,5 +66,24 @@ public class UserDao extends AbstractDao<Users> {
         }
     }
 
-    
+    public Users findByUsername(String username) {
+        try(PreparedStatement preparedStatement = connect.prepareStatement(findByUsernameQuery)){
+
+            preparedStatement.setString(1, username);
+
+            try(ResultSet result = preparedStatement.executeQuery()){
+                if (result.next()) {
+                    String usernameF = result.getString("username");
+                    String passwordHash = result.getString("password");
+
+                    return new Users(usernameF, passwordHash);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
 }
