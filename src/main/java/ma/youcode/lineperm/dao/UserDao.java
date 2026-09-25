@@ -8,7 +8,10 @@ public class UserDao extends AbstractDao<Users> {
 
     private static final String insertQuery =
             "INSERT INTO users(username, password) VALUES (?, ?)";
-    
+            
+    private static final String findByIdQuery =
+                    "SELECT * FROM users WHERE id = ?";
+
     private static final String deleteQuery =
             "DELETE FROM users WHERE id = ?";
 
@@ -47,6 +50,17 @@ public class UserDao extends AbstractDao<Users> {
 
     @Override
     public void delete(int id) {
+        try(PreparedStatement preparedStatement = connect.prepareStatement(deleteQuery)){
+            preparedStatement.setInt(1, id);
+
+            int result = preparedStatement.executeUpdate();
+
+            if(result == 0){
+                System.out.println("Aucun utilisateur avec id = " + id);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     
