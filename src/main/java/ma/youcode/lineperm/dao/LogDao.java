@@ -2,6 +2,8 @@ package ma.youcode.lineperm.dao;
 
 import ma.youcode.lineperm.model.AccessLog;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class LogDao extends AbstractDao<AccessLog> {
 
@@ -44,25 +46,27 @@ public class LogDao extends AbstractDao<AccessLog> {
     @Override
     public AccessLog findById(int id) {
         try (PreparedStatement preparedStatement = connect.prepareStatement(findLogByIdQuery)) {
-            
+
             preparedStatement.setInt(1, id);
 
-            try(ResultSet result = preparedStatement.executeQuery()){
+            try (ResultSet result = preparedStatement.executeQuery()) {
 
                 if (result.next()) {
-                    String date = result.getString("date");
-                    String time = result.getString("time");
+                    LocalDate date = LocalDate.parse(result.getString("date"));
+                    LocalTime time = LocalTime.parse(result.getString("time"));
                     String user = result.getString("user");
                     String action = result.getString("action");
                     String file = result.getString("file");
                     String resultat = result.getString("result");
-                }
 
+                    return new AccessLog(date, time, user, action, file, resultat);
+                }
             }
 
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
+
         return null;
     }
 
