@@ -4,6 +4,8 @@ import ma.youcode.lineperm.model.AccessLog;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LogDao extends AbstractDao<AccessLog> {
 
@@ -22,8 +24,8 @@ public class LogDao extends AbstractDao<AccessLog> {
     private static final String countAccessDeniedQuery =
             "SELECT COUNT(*) AS total FROM logs WHERE result = 'REFUSE'";
 
-    private static final String countDistinctUsersQuery =
-            "SELECT COUNT(DISTINCT user) AS total FROM logs";
+    private static final String findDistinctUsersQuery  =
+            "SELECT DISTINCT user FROM logs";
 
 
     @Override
@@ -114,14 +116,20 @@ public class LogDao extends AbstractDao<AccessLog> {
         return 0;
     }
 
-    public long countUtilisateursDistincts() {
-        try (PreparedStatement preparedStatement = connect.prepareStatement(countDistinctUsersQuery)) {
-            
+    public List<String> findDistinctUsers() {
+        List<String> users = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connect.prepareStatement(findDistinctUsersQuery)) {
+            ResultSet result = preparedStatement.executeQuery();
+
+            while(result.next()){
+                users.add(result.getString("user"));
+            }
+
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
 
-        return 0;
+        return users;
     }
 
     public void actionsByUser() {
