@@ -11,7 +11,17 @@ public class LogDao extends AbstractDao<AccessLog> {
     private static final String findLogByIdQuery =
             "SELECT * FROM logs WHERE id = ?";
 
+    private static final String deleteLogQuery =
+            "DELETE FROM logs WHERE id = ?";
 
+    private static final String countTotalActionsQuery =
+            "SELECT COUNT(*) AS total FROM logs";
+
+    private static final String countAccessDeniedQuery =
+            "SELECT COUNT(*) AS total FROM logs WHERE result = 'REFUSE'";
+
+    private static final String countDistinctUsersQuery =
+            "SELECT COUNT(DISTINCT user) AS total FROM logs";
 
 
     @Override
@@ -58,12 +68,66 @@ public class LogDao extends AbstractDao<AccessLog> {
 
     @Override
     public void delete(int id) {
-        // try () {
-            
-        // } catch (SQLException e) {
-        //     System.err.println(e.getMessage());
-        // }
+        try (PreparedStatement preparedStatement = connect.prepareStatement(deleteLogQuery)) {
+            preparedStatement.setInt(1, id);
+
+            int result = preparedStatement.executeUpdate();
+
+            if(result == 0){
+                System.out.println("Aucun Logs avec id = " + id);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
+    public long countTotalActions() {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(countTotalActionsQuery)) {
+            
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
 
+        return 0;
+    }
+
+    public long countAccesRefuses() {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(countAccessDeniedQuery)) {
+            
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return 0;
+    }
+
+    public long countUtilisateursDistincts() {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(countDistinctUsersQuery)) {
+            
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return 0;
+    }
+
+    public void actionsByUser() {
+
+    }
+
+    public void topFichiers(int limite) {
+
+    }
+
+    public void refusesByUser(String username) {
+
+    }
+
+    public void userPlusActif() {
+
+    }
+
+    public void repartitionByAction() {
+
+    }
 }
