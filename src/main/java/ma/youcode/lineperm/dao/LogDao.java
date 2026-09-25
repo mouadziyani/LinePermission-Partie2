@@ -8,6 +8,9 @@ public class LogDao extends AbstractDao<AccessLog> {
     private static final String insertLogQuery =
             "INSERT INTO logs(date, time, user, action, file, result) VALUES (?, ?, ?, ?, ?, ?)";
 
+    private static final String findLogByIdQuery =
+            "SELECT * FROM logs WHERE id = ?";
+
 
 
 
@@ -28,5 +31,39 @@ public class LogDao extends AbstractDao<AccessLog> {
         }
     }
 
- 
+    @Override
+    public AccessLog findById(int id) {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(findLogByIdQuery)) {
+            
+            preparedStatement.setInt(1, id);
+
+            try(ResultSet result = preparedStatement.executeQuery()){
+
+                if (result.next()) {
+                    String date = result.getString("date");
+                    String time = result.getString("time");
+                    String user = result.getString("user");
+                    String action = result.getString("action");
+                    String file = result.getString("file");
+                    String resultat = result.getString("result");
+                }
+
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public void delete(int id) {
+        // try () {
+            
+        // } catch (SQLException e) {
+        //     System.err.println(e.getMessage());
+        // }
+    }
+
+
 }
