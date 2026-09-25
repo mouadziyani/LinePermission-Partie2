@@ -6,15 +6,19 @@ import ma.youcode.lineperm.model.FichierProtege;
 
 public class FichierDao extends AbstractDao<FichierProtege> {
 
-    private static final String insertQuery =
+    private static final String insertFileQuery =
         "INSERT INTO files(name, owner, permissions) VALUES (?, ?, ?)";
 
-    private static final String findByIdQuery =
+    private static final String findFileByIdQuery =
             "SELECT * FROM files WHERE id = ?";
+
+    private static final String deleteFileQuery =
+            "DELETE FROM files WHERE id = ?";
+
 
     @Override
     public void save(FichierProtege fichier) {
-        try (PreparedStatement preparedStatement = connect.prepareStatement(insertQuery)) {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(insertFileQuery)) {
             preparedStatement.setString(1, fichier.getNameOfFile());
             preparedStatement.setString(2, fichier.getOwner());
             preparedStatement.setString(3, fichier.getPermission());
@@ -28,7 +32,7 @@ public class FichierDao extends AbstractDao<FichierProtege> {
 
     @Override
     public FichierProtege findById(int id) {
-        try (PreparedStatement preparedStatement = connect.prepareStatement(findByIdQuery)) {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(findFileByIdQuery)) {
             preparedStatement.setInt(1, id);
 
             try (ResultSet reuslt = preparedStatement.executeQuery()) {
@@ -46,6 +50,17 @@ public class FichierDao extends AbstractDao<FichierProtege> {
 
     @Override
     public void delete(int id) {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(deleteFileQuery)) {
+            preparedStatement.setInt(1, id);
+
+            int result = preparedStatement.executeUpdate();
+
+            if(result == 0){
+                System.out.println("Aucun utilisateur avec id = " + id);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
 
