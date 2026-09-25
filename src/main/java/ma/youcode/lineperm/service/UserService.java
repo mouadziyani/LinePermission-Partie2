@@ -1,48 +1,34 @@
 package ma.youcode.lineperm.service;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.*;
-
+import ma.youcode.lineperm.dao.*;
+import ma.youcode.lineperm.model.Users;
 
 public class UserService{
+
+    public final UserDao userDao;
 
     public static HashMap<String , String> users = new HashMap<>();
 
         Path file = Path.of("src/main/resources/users.txt");
 
     public UserService(){
-        loadUser();
+        this.userDao = new UserDao();
     };
 
+    public void saveUsers(Users user){
+        userDao.save(user);
+    }
 
-
-    public void loadUser(){
-
-        if(!Files.exists(file)){
-            return ;
-        }
-
-        try {
-
-        List<String> list = Files.readAllLines(file);
-
-        for (int i = 0; i < list.size(); i++) {
-
-            String[] listeSplit = list.get(i).split(":", 2);
-
-            if (listeSplit.length == 2) {
-
-                String username = listeSplit[0].trim();
-                String passwordHash = listeSplit[1].trim();
-
-                users.put(username,passwordHash);
-            }
-        }   
-
-        } catch (Exception e) {
-            System.out.println(e.getStackTrace());
-        }
+    public Users findById(int id){
+        return userDao.findById(id);
+    }
+    public Users findByUsername(String username){
+        return userDao.findByUsername(username);
+    }
+    public void deletUsers(int id){
+        userDao.delete(id);
     }
 
 }
