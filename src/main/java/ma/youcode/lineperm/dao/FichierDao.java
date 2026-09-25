@@ -19,6 +19,8 @@ public class FichierDao extends AbstractDao<FichierProtege> {
     private static final String findFileByOwnerQuery=
             "SELECT * FROM files WHERE owner = ?";
 
+    private static final String permissionQuery =
+            "UPDATE files SET permissions = ? WHERE id = ?";
 
     @Override
     public void save(FichierProtege fichier) {
@@ -85,5 +87,19 @@ public class FichierDao extends AbstractDao<FichierProtege> {
         return null;
     }    
 
+    public void updatePermission(int id, String permission) {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(permissionQuery)) {
+            preparedStatement.setString(1, permission);
+            preparedStatement.setInt(2, id);
+
+            int result = preparedStatement.executeUpdate();
+
+            if (result == 0) {
+                System.out.println("Aucun fichier trouvé avec id = " + id);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
 
 }
