@@ -6,9 +6,11 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import ma.youcode.lineperm.model.AccessLog;
+import ma.youcode.lineperm.ui.log;
 
 public class LogService {
     Path link = Path.of("src/main/resources/access.log");
@@ -52,6 +54,8 @@ public void saveLogs(
                 StandardOpenOption.CREATE,
                 StandardOpenOption.APPEND
         );
+        
+        logs.add(log);
 
     } catch (Exception e) {
         System.out.println(e.getMessage());
@@ -158,6 +162,6 @@ public void saveLogs(
                     )
                 );        
     }
-}
 
+}
 
