@@ -1,15 +1,22 @@
     package ma.youcode.lineperm.ui;
 
-    import java.util.Scanner;
+    import java.time.LocalDate;
+import java.util.Scanner;
 
 import ma.youcode.lineperm.service.LogService;
 
     public class log {
+
+        LogService logService;
+
+        public log(LogService logService){
+            this.logService=logService;
+        }
+
         public void logMenue(){
 
             Scanner scanner = new Scanner(System.in);
-
-            LogService logService = new LogService() ;
+            
 
             int choix ;
             
@@ -91,5 +98,10 @@ import ma.youcode.lineperm.service.LogService;
 
             }while(!(choix == 0));
 
+        }
+
+        public static Object compare(LocalDate date, LocalDate date2) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'compare'");
         }
     }

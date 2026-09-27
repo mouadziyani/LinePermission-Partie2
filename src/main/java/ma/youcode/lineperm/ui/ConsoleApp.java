@@ -12,7 +12,7 @@
             AuthService service = new AuthService();
             FileService fileService = new FileService();
             LogService logService = new LogService();
-            log log = new log();
+            log log = new log(logService);
 
             String choixDeUser;
             String[] choix = null;
