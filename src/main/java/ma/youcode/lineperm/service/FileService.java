@@ -2,99 +2,62 @@ package ma.youcode.lineperm.service;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
 
+import ma.youcode.lineperm.dao.FichierDao;
 import ma.youcode.lineperm.model.FichierProtege;
 
-public class FileService{
+public class FileService {
 
-    Path dossier = Path.of("createdFile");  
-    private List<FichierProtege> fichiers = new ArrayList<>();
-    Path files = Path.of("src/main/resources/files.txt");
+    FichierDao fichierDao = new FichierDao();
 
-    public FileService(){
-        loadFiles();
-    }
+    Path dossier = Path.of("createdFile");
 
-   public boolean touch(String name, String owner) {
+    public boolean touch(String name, String owner) {
+        try {
+            if (name == null || name.isEmpty()) {
+                return false;
+            }
 
-       
-       try {
-           
-           if (name == null || name.isEmpty()) {
-               return false;
-           }
-    
-           for (FichierProtege fichier : fichiers) {
-               if (fichier.getNameOfFile().equals(name)) {
-                   return false;
-               }
-           }
+            if (fichierDao.findByName(name) != null) {
+                return false;
+            }
+
             if (!Files.exists(dossier)) {
                 Files.createDirectory(dossier);
             }
 
-            
-                Path file = dossier.resolve(name);
+            Path file = dossier.resolve(name);
 
-                Files.createFile(file);
+            if (Files.exists(file)) {
+                return false;
+            }
 
-                FichierProtege newFile = new FichierProtege(name, owner);
+            Files.createFile(file);
 
-                String filePermWriter = "rwd|--- " + owner + " " + name;
+            FichierProtege newFile = new FichierProtege(name, owner);
 
-                Files.writeString(files, filePermWriter+System.lineSeparator(),StandardOpenOption.APPEND);
+            fichierDao.save(newFile);
 
-                fichiers.add(newFile);
-                return true ;
+            return true;
 
         } catch (Exception e) {
-
-            System.out.println(e.getStackTrace());
+            System.out.println(e.getMessage());
             return false;
         }
     }
 
     public void lsFichier() {
-        try {
-            if (!Files.exists(files)) {
-                System.out.println("Aucun fichier");
-                return;
-            }
-
-            List<String> lignes = Files .readAllLines(files);
-
-            if (lignes.isEmpty()) {
-                System.out.println("Aucun fichier");
-                return;
-            }
-
-            for (String ligne : lignes) {
-                System.out.println(ligne);
-            }
-
-        } catch (Exception e) {
-            System.out.println(e.getStackTrace());
-        }
+        fichierDao.findAll();
     }
 
-    public boolean catFile(String name , String username){
-
-        FichierProtege filePerm = null ;
-
-        for (FichierProtege file : fichiers) {
-            if (file.getNameOfFile().equals(name)) {
-                filePerm = file;
-                break;
-            }
-        }
+    public boolean catFile(String name, String username) {
+        FichierProtege filePerm = fichierDao.findByName(name);
 
         if (filePerm == null) {
             System.out.println("File not found");
-            return false ;
+            return false;
         }
+
         if (!filePerm.getOwner().equals(username) && !filePerm.getOtherR()) {
             System.out.println("Permission denied.");
             return false;
@@ -119,23 +82,13 @@ public class FileService{
             return true;
 
         } catch (Exception e) {
-            System.out.println(e.getStackTrace());
-
+            System.out.println(e.getMessage());
             return false;
         }
-
     }
 
-    public boolean nano(String name , String contenue , String username){
-
-        FichierProtege filePerm = null;
-
-        for (FichierProtege file : fichiers) {
-            if (file.getNameOfFile().equals(name)) {
-                filePerm = file;
-                break;
-            }
-        }
+    public boolean nano(String name, String contenue, String username) {
+        FichierProtege filePerm = fichierDao.findByName(name);
 
         if (filePerm == null) {
             System.out.println("File not found");
@@ -148,166 +101,68 @@ public class FileService{
         }
 
         Path file = dossier.resolve(name);
+
         try {
             if (!Files.exists(file)) {
                 System.out.println("Aucun fichier");
-                return true;
+                return false;
             }
 
             Files.writeString(file, contenue);
-            return true ;
-            
+            return true;
+
         } catch (Exception e) {
-            System.out.println(e.getStackTrace());
-            return false ;
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
-    public boolean chmod(String username, String permission, String fileName){
+    public boolean chmod(String username, String permission, String fileName) {
+        FichierProtege filePerm = fichierDao.findByName(fileName);
 
-        FichierProtege filePerm = null;
-
-        for(FichierProtege file : fichiers){
-
-            if(file.getNameOfFile().equals(fileName)){
-                filePerm = file;
-                break;
-            }
-        }
-
-        if(filePerm == null){
+        if (filePerm == null) {
             System.out.println("File not found");
             return false;
         }
 
-        if(!filePerm.getOwner().equals(username)){
+        if (!filePerm.getOwner().equals(username)) {
             System.out.println("Permission denied.");
             return false;
         }
 
-
-        if(permission.equals("r")) {
-
-        filePerm.setPermission('r');
-
-        } else if(permission.equals("w")) {
-
+        if (permission.equals("r")) {
+            filePerm.setPermission('r');
+        } else if (permission.equals("w")) {
             filePerm.setPermission('w');
-
-        } else if(permission.equals("d")) {
-
+        } else if (permission.equals("d")) {
             filePerm.setPermission('d');
-
-        } else if(permission.equals("-r")) {
-
+        } else if (permission.equals("-r")) {
             filePerm.removePermission('r');
-
-        } else if(permission.equals("-w")) {
-
+        } else if (permission.equals("-w")) {
             filePerm.removePermission('w');
-
-        } else if(permission.equals("-d")) {
-
+        } else if (permission.equals("-d")) {
             filePerm.removePermission('d');
-
         } else {
-
             System.out.println("Permission invalide");
             return false;
         }
 
-        saveFiles();
+        fichierDao.updatePermission(fileName, filePerm.getPermission());
 
         return true;
     }
 
-    public void loadFiles(){
-
-        if (!Files.exists(files)) {
-            return;
-        }
-
-        try {
-
-            List<String> lignes = Files.readAllLines(files);
-
-            for (String ligne : lignes) {
-
-                if (ligne.isEmpty()) {
-                    continue;
-                }
-
-                String[] data = ligne.split(" ");
-
-                if (data.length == 3) {
-
-                    String permission = data[0];
-                    String owner = data[1];
-                    String name = data[2];
-
-                    FichierProtege fichier = new FichierProtege(name, owner);
-
-                    if (permission.charAt(4) == 'r') {
-                        fichier.setotherR(true);
-                    }
-
-                    if (permission.charAt(5) == 'w') {
-                        fichier.setotherW(true);
-                    }
-
-                    if (permission.charAt(6) == 'd') {
-                        fichier.setotherD(true);
-                    }
-
-                    fichiers.add(fichier);
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println(e.getStackTrace());
-        }
-    }
-
-    public void saveFiles() {
-
-        try {
-
-            StringBuilder content = new StringBuilder();
-
-            for (FichierProtege fichier : fichiers) {
-
-                content.append(fichier.getPermission())
-                    .append(" ")
-                    .append(fichier.getOwner())
-                    .append(" ")
-                    .append(fichier.getNameOfFile())
-                    .append(System.lineSeparator());
-            }
-
-            Files.writeString(files, content.toString());
-
-        } catch (Exception e) {
-            System.out.println(e.getStackTrace());
-        }
-    }
-
     public boolean canWrite(String fileName, String username) {
+        FichierProtege filePerm = fichierDao.findByName(fileName);
 
-        for (FichierProtege filePerm : fichiers) {
-
-            if (filePerm.getNameOfFile().equals(fileName)) {
-
-                if (!filePerm.getOwner().equals(username)
-                        && !filePerm.getOtherW()) {
-
-                    return false;
-                }
-
-                return true;
-            }
+        if (filePerm == null) {
+            return false;
         }
 
-        return false;
+        if (!filePerm.getOwner().equals(username) && !filePerm.getOtherW()) {
+            return false;
+        }
+
+        return true;
     }
-    
 }
