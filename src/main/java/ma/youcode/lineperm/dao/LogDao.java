@@ -27,6 +27,20 @@ public class LogDao extends AbstractDao<AccessLog> {
     private static final String findDistinctUsersQuery  =
             "SELECT DISTINCT user FROM logs";
 
+    private static final String actionsByUserQuery =
+            "SELECT user, COUNT(*) AS total FROM logs GROUP BY user";
+
+    private static final String topFilesQuery =
+            "SELECT file, COUNT(*) AS total FROM logs GROUP BY file ORDER BY total DESC LIMIT 3";
+
+    private static final String refusedByUserQuery =
+            "SELECT COUNT(*) AS total FROM logs WHERE user = ? AND result = 'REFUSE'";
+
+    private static final String userPlusActifQuery =
+            "SELECT user, COUNT(*) AS total FROM logs GROUP BY user ORDER BY total DESC LIMIT 1";
+
+    private static final String repartitionByActionQuery =
+            "SELECT action, COUNT(*) AS total FROM logs GROUP BY action";
 
     @Override
     public void save(AccessLog log) {
@@ -133,22 +147,83 @@ public class LogDao extends AbstractDao<AccessLog> {
     }
 
     public void actionsByUser() {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(actionsByUserQuery);
+            ResultSet result = preparedStatement.executeQuery()) {
 
+            while (result.next()) {
+                String user = result.getString("user");
+                long total = result.getLong("total");
+
+                System.out.println(user + " : " + total);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
-    public void topFichiers(int limite) {
+    public void topFichiers() {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(topFilesQuery);
+            ResultSet result = preparedStatement.executeQuery()) {
 
+            while (result.next()) {
+                String file = result.getString("file");
+                long total = result.getLong("total");
+
+                System.out.println(file + " : " + total);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void refusesByUser(String username) {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(refusedByUserQuery)) {
 
+            preparedStatement.setString(1, username);
+
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    long total = result.getLong("total");
+                    System.out.println(username + " : " + total);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void userPlusActif() {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(userPlusActifQuery);
+            ResultSet result = preparedStatement.executeQuery()) {
 
+            if (result.next()) {
+                String user = result.getString("user");
+                long total = result.getLong("total");
+
+                System.out.println(user + " : " + total);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void repartitionByAction() {
+        try (PreparedStatement preparedStatement = connect.prepareStatement(repartitionByActionQuery);
+            ResultSet result = preparedStatement.executeQuery()) {
 
+            while (result.next()) {
+                String action = result.getString("action");
+                long total = result.getLong("total");
+
+                System.out.println(action + " : " + total);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }
