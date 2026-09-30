@@ -57,7 +57,8 @@ Chaque fichier possède trois permissions :
 Exemple de permission :
 
 ```txt
-rwd|r--```
+rwd|r--
+```
 
 Cela signifie :
 
